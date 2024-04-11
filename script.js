@@ -122,9 +122,25 @@ const whereAmI2 = async function () {
       if (!resCountry.ok) throw new Error('Problem getting country information');
       const dataCountry = await resCountry.json();
       renderCountry(dataCountry[0]);
+
+      return `You are in ${dataGeo.countryName}`;
    } catch (err) {
       console.log(err.message);
+      // rethrowing err
+      throw err;
    }
 };
 
-whereAmI2();
+// 1 way of Returning Values from Async Functions
+whereAmI2()
+   .then(console.log)
+   .catch((err) => console.log(`2: ${err.message}`));
+// 2 way Returning Values from Async Functions
+(async function () {
+   try {
+      const city = await whereAmI2();
+      console.log(city);
+   } catch (err) {
+      console.log(`2: ${err.message}`);
+   }
+})();
