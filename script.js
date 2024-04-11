@@ -87,21 +87,21 @@ const createImage = function (imgPath) {
 
 let currentImg;
 
-createImage('/img/img-1.jpg')
-   .then((img) => {
-      currentImg = img;
-      return wait(2);
-   })
-   .then(() => {
-      currentImg.style.display = 'none';
-      return createImage('/img/img-2.jpg');
-   })
-   .then((img) => {
-      currentImg = img;
-      return wait(2);
-   })
-   .then(() => (currentImg.style.display = 'none'))
-   .catch((err) => console.error(err));
+// createImage('/img/img-1.jpg')
+//    .then((img) => {
+//       currentImg = img;
+//       return wait(2);
+//    })
+//    .then(() => {
+//       currentImg.style.display = 'none';
+//       return createImage('/img/img-2.jpg');
+//    })
+//    .then((img) => {
+//       currentImg = img;
+//       return wait(2);
+//    })
+//    .then(() => (currentImg.style.display = 'none'))
+//    .catch((err) => console.error(err));
 
 // --------------------//
 
@@ -112,15 +112,19 @@ const getPosition = function () {
 };
 
 const whereAmI2 = async function () {
-   const pos = await getPosition();
-   const { latitude: lat, longitude: lng } = pos.coords;
-
-   const resGeo = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`);
-   const dataGeo = await resGeo.json();
-
-   const resCountry = await fetch(`https://restcountries.com/v3.1/name/${dataGeo.countryName}`);
-   const dataCountry = await resCountry.json();
-   renderCountry(dataCountry[0]);
+   try {
+      const pos = await getPosition();
+      const { latitude: lat, longitude: lng } = pos.coords;
+      const resGeo = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`);
+      if (!resGeo.ok) throw new Error('Problem getting location data');
+      const dataGeo = await resGeo.json();
+      const resCountry = await fetch(`https://restcountries.com/v3.1/name/${dataGeo.countryName}`);
+      if (!resCountry.ok) throw new Error('Problem getting country information');
+      const dataCountry = await resCountry.json();
+      renderCountry(dataCountry[0]);
+   } catch (err) {
+      console.log(err.message);
+   }
 };
 
 whereAmI2();
