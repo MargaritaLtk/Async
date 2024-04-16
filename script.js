@@ -80,6 +80,8 @@ const createImage = function (imgPath) {
 
       img.addEventListener('load', function () {
          imgContainer.append(img);
+         console.log(`${img} loaded`);
+
          resolve(img);
       });
    });
@@ -104,6 +106,21 @@ let currentImg;
 //    .catch((err) => console.error(err));
 
 // --------------------//
+
+const loadNPause = async function () {
+   try {
+      let img = await createImage('/img/img-1.jpg');
+      await wait(2);
+      img.style.display = 'none';
+      img = await createImage('/img/img-2.jpg');
+      await wait(2);
+      img.style.display = 'none';
+   } catch (err) {
+      console.log(err);
+   }
+};
+
+// loadNPause();
 
 const getPosition = function () {
    return new Promise((resolve, reject) => {
@@ -131,7 +148,7 @@ const whereAmI2 = async function () {
    }
 };
 
-// 1 way of Returning Values from Async Functions
+// // 1 way of Returning Values from Async Functions
 whereAmI2()
    .then(console.log)
    .catch((err) => console.log(`2: ${err.message}`));
@@ -162,4 +179,16 @@ const get3Countries = async function (c1, c2, c3) {
    }
 };
 
-get3Countries('portugal', 'canada', 'belarus');
+// get3Countries('portugal', 'canada', 'belarus');
+
+const loadAll = async function (imgArr) {
+   try {
+      const imgs = imgArr.map(async (img) => await createImage(img));
+      const imgsEL = await Promise.all(imgs);
+      imgsEL.forEach((img) => img.classList.add('parallel'));
+   } catch (err) {
+      console.log(err);
+   }
+};
+
+// loadAll(['/img/img-1.jpg', '/img/img-2.jpg', '/img/img-3.jpg']);
